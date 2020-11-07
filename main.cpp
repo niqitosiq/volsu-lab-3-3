@@ -70,7 +70,7 @@ int main() {
         }
 
         // Задание 1
-        cout << "Сиволов в строке: " << wordsCount << "\n";
+        cout << "Слов в строке: " << wordsCount << "\n";
         // Задание 6
         cout << "Текст без точек: " << newLine << endl;
 
