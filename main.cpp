@@ -43,6 +43,7 @@ int main() {
             if (c == ' ' || letterInLineCount >= line.length()) {
                 if (letterInWordCount > 0) {
                     wordsCount++;
+                    letterInWordCount = 0;
                 }
             } else {
                 letterInWordCount++;
