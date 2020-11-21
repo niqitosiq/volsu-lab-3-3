@@ -9,89 +9,51 @@ int main() {
 
     setlocale(LC_ALL, "rus");
 
-    string line;
+    string withSpaces = "Hello i am is a cat9 my name is fffRomapppppp ";
 
-    ifstream file("../file.txt");
-    ofstream outFile("../out.txt");
+    string firstSubstring = "Roma";
+    string secondSubstring = "Ivan!";
 
-    string maxLengthLine;
-    int maxLengthLineLength = 0;
-    int maxLengthLineNumber = -1;
+    int spaceIndex = withSpaces.find(" ");
+    int lastIndex = -1;
 
-    vector<string> lines;
+    string newString = "";
 
-    int lineCount = 0;
+    while (spaceIndex != -1) { // Пока находится пробел, цикл итерирует
+        int lastIndexWithSpace = lastIndex + 1; // Получение индекса начала текущего слова
+        string currentWord = withSpaces.substr(lastIndexWithSpace, spaceIndex - lastIndexWithSpace); // Получение текущего слова по индексу начала и конца
+        int currentWordLength = currentWord.length(); // Вспомогательная переменная
 
-    string sentence;
-    bool isSentenceFinded = false;
+        // Преобразовать массив слов строки, заменив во всех словах первое вхождение первой подстроки на вторую подстроку.
+        int firstSubstringIndex = currentWord.find(firstSubstring); // Индекс первого вхождения первой подстроки
 
-    getline(file, line);
-    while (true) {
-        int wordsCount = 0;
-        int letterInWordCount = 0;
-        int letterInLineCount = 0;
-        string newLine;
+        if (firstSubstringIndex != -1) { // Если подстрока найдена
+            int firstSubstringLength = firstSubstring.length();
 
-        for(char& c : line) {
-            letterInLineCount++;
-
-            if (!isSentenceFinded) {
-                sentence += c;
-            }
-
-            // Задание 1
-            if (c == ' ' || letterInLineCount >= line.length()) {
-                if (letterInWordCount > 0) {
-                    wordsCount++;
-                    letterInWordCount = 0;
-                }
-            } else {
-                letterInWordCount++;
-            }
-
-            // Задание 6
-            if (c != '.') {
-                newLine += c;
-            } else if (!isSentenceFinded) {
-                // Задание 21
-                cout << "Первое предложение: " << sentence << endl;
-                isSentenceFinded = true;
-            }
+            currentWord.replace(firstSubstringIndex, firstSubstringLength, secondSubstring); // Замена в исходной строке
         }
 
-        lineCount++;
-        lines.push_back(newLine);
+        // Сформировать предложение из слов, в составе которых есть цифры, предварительно добавив к слову это же перевернутое слово (например, слово “ab9cd” должно войти в предложение в виде “ab9cddc9ba”)
+        string numbers = "0123456789";
+        int isWordHaveNumber = currentWord.find_first_of(numbers) != -1;
 
-        // Задание 11
-        if (maxLengthLineLength < letterInLineCount) {
-            maxLengthLine = line;
-            maxLengthLineLength = letterInLineCount;
-            maxLengthLineNumber = lineCount;
+        if (isWordHaveNumber) { // Если в слове есть цифры
+            string palendromicBuffer = ""; // Буфер для хранения созданого палендрома
+            for(char& word : currentWord) {
+                palendromicBuffer.insert(0, 1, word); // Каждая буква слова вставляется в буффер в начало
+            }
+            currentWord.insert(currentWordLength, palendromicBuffer);
         }
 
-        // Задание 1
-        cout << "Слов в строке: " << wordsCount << "\n";
-        // Задание 6
-        cout << "Текст без точек: " << newLine << endl;
+        newString += currentWord + " "; // Формирование новой строки с добавлением пробела
 
-        if (!getline(file, line)) break;
+        withSpaces.replace(spaceIndex, 1, "_"); // Замена пробела в исходной строке на другой символ, чтобы можно было производить поиск и не наткнуться на старый пробел
+
+        lastIndex = spaceIndex; // Сохранение индекса пробела
+        spaceIndex = withSpaces.find(" "); // Обновление индекса пробела
     }
 
-    // Задание 11
-    cout << maxLengthLine << ": " << maxLengthLineNumber << endl;
-
-    // Задание 16
-    int outLineCount = 0;
-    for (auto& line : lines) {
-        if (outLineCount != maxLengthLineNumber) {
-            outFile << line << endl;
-        }
-        outLineCount++;
-    }
-
-
-    outFile.close();
-    file.close();
+    cout << newString << endl;
 
     return 0;
 }
